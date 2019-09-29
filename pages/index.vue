@@ -1,8 +1,15 @@
 <template>
   <div id="todo">
     <h1>Todo</h1>
-    {{ todos }}
     <TodoList :todos="todos" v-on:check="done"/>
+    <p>
+      新しいTodoの追加:
+      <input
+        type="text"
+        v-model="newTodo"
+        @keyup.enter="addTodo"
+      >
+    </p>
   </div>
 </template>
 
@@ -26,6 +33,7 @@ export default {
   },
   data () {
     return {
+      newTodo: '',
       todos: [
         { id: getUUID(), text: '緑茶を買う', done: false},
         { id: getUUID(), text: 'Elasticsearchを勉強する', done: false},
@@ -39,6 +47,14 @@ export default {
       this.todos.find(
         (todo) => todo.id === id
       ).done = checked
+    },
+    addTodo () {
+      this.todos.push({
+        id: getUUID(),
+        text: this.newTodo,
+        done: false
+      })
+      this.newTodo = ''
     }
   }
 }
