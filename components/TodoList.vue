@@ -2,7 +2,7 @@
   <div id="todoList">
     <h2>TodoList</h2>
     <ul>
-      <li v-for="todo in todos" v-bind:key="todo.id">
+      <li v-for="todo in todos" :key="todo.id">
         <input
           type="checkbox"
           :checked="todo.done"
@@ -24,14 +24,17 @@ export default {
     todos: Array
   },
   methods: {
-    clickCheckbox (e) {
+    async clickCheckbox (e) {
       const id = e.target.id
       const checked = e.target.checked
-      this.$emit('check', id, checked)
+      await this.$store.dispatch('todos/changeDoneState', {
+        id: id,
+        done: checked
+      })
     },
-    deleteTodo (e) {
+    async deleteTodo (e) {
       const id = e.target.id
-      this.$emit('del', id)
+      await this.$store.dispatch('todos/remove', { id: id })
     }
   }
 }
