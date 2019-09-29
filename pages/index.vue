@@ -1,65 +1,70 @@
 <template>
-  <div>
-    <table>
-      <caption>好きなものリスト</caption>
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>name</th>
-          <th>likes</th>
-        </tr>
-      </thead>
-      <tbody v-for="user in users" v-bind:key="user.id">
-        <tr>
-          <td>{{ user.id }}</td>
-          <td>{{ user.name }}</td>
-          <td>
-            <ul>
-              <li v-for="(item, index) in user.like" v-bind:key="index">
-                {{ item }}
-              </li>
-            </ul>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div id="todo">
+    <h1>Todo</h1>
+    <TodoList :todos="todos" @check="done" @del="deleteTodo"/>
+    <p>
+      新しいTodoの追加:
+      <input
+        type="text"
+        v-model="newTodo"
+        @keyup.enter="addTodo"
+      >
+    </p>
   </div>
 </template>
 
-
-<style scoped>
-table {
-  width: 100%;
-}
-
-tbody:nth-child(odd) {
-  background: #eee;
-}
-
-ul {
-  padding: 0;
-  margin: 5px 0;
-}
-
-li {
-  display: inline;
-  margin: 0 5px;
-  padding: 5px;
-  background-color: #ccc;
-  border-radius: 20px;
-}
-</style>
-
-
 <script>
-import axios from 'axios'
+import TodoList from '~/components/TodoList.vue'
+
+const getUUID = () => {
+  const R = (length) => {
+    let uid = ''
+    for (let i = 0; i < length; i++) {
+      uid += Math.floor(Math.random() * 16).toString(16)
+    }
+    return uid
+  }
+  return `${R(8)}-${R(4)}-4${R(3)}-${R(4)}-${R(12)}`
+}
 
 export default {
-  async asyncData() {
-    const { data } = await axios.get('https://api.myjson.com/bins/yzzof')
+  components: {
+    TodoList
+  },
+  data () {
     return {
-      users: data
+      newTodo: '',
+      todos: [
+        { id: getUUID(), text: '緑茶を買う', done: false},
+        { id: getUUID(), text: 'Elasticsearchを勉強する', done: false},
+        { id: getUUID(), text: '洗濯機を買う', done: false},
+        { id: getUUID(), text: '結婚式に行ってくる', done: true}
+      ]
+    }
+  },
+  methods: {
+    done (id, checked) {
+      this.todos.find(
+        (todo) => todo.id === id
+      ).done = checked
+    },
+    addTodo () {
+      this.todos.push({
+        id: getUUID(),
+        text: this.newTodo,
+        done: false
+      })
+      this.newTodo = ''
+    },
+    deleteTodo (id) {
+      this.todos = this.todos.filter((todo) => todo.id !== id)
     }
   }
 }
 </script>
+
+<style scoped>
+#todo {
+  background-color: #aea;
+}
+</style>
