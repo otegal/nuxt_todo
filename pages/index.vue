@@ -1,63 +1,36 @@
 <template>
   <div id="todo">
     <h1>Todo</h1>
-    <TodoList :todos="todos" @check="done" @del="deleteTodo"/>
-    <p>
-      新しいTodoの追加:
-      <input
-        type="text"
-        v-model="newTodo"
-        @keyup.enter="addTodo"
-      >
-    </p>
+    <TodoList :todos="todos"/>
+    <p>新しいTodoの追加: <input type="text" v-model="newTodo" @keyup.enter="addTodo"></p>
   </div>
 </template>
 
 <script>
 import TodoList from '~/components/TodoList.vue'
 
-const getUUID = () => {
-  const R = (length) => {
-    let uid = ''
-    for (let i = 0; i < length; i++) {
-      uid += Math.floor(Math.random() * 16).toString(16)
-    }
-    return uid
-  }
-  return `${R(8)}-${R(4)}-4${R(3)}-${R(4)}-${R(12)}`
-}
-
 export default {
+  async fetch ({ store }) {
+    await store.dispatch('todos/add', { text: 'Manjaro linux' })
+    await store.dispatch('todos/add', { text: 'Elm' })
+  },
+  computed: {
+    todos () {
+      return this.$store.state.todos.list
+    }
+  },
   components: {
     TodoList
   },
   data () {
     return {
-      newTodo: '',
-      todos: [
-        { id: getUUID(), text: '緑茶を買う', done: false},
-        { id: getUUID(), text: 'Elasticsearchを勉強する', done: false},
-        { id: getUUID(), text: '洗濯機を買う', done: false},
-        { id: getUUID(), text: '結婚式に行ってくる', done: true}
-      ]
+      newTodo: ''
     }
   },
   methods: {
-    done (id, checked) {
-      this.todos.find(
-        (todo) => todo.id === id
-      ).done = checked
-    },
-    addTodo () {
-      this.todos.push({
-        id: getUUID(),
-        text: this.newTodo,
-        done: false
-      })
+    async addTodo () {
+      await this.$store.dispatch('todos/add', { text: this.newTodo })
       this.newTodo = ''
-    },
-    deleteTodo (id) {
-      this.todos = this.todos.filter((todo) => todo.id !== id)
     }
   }
 }
