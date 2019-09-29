@@ -1,7 +1,8 @@
 <template>
   <div id="todo">
     <h1>Todo</h1>
-    <TodoList :todos="todos"/>
+    {{ todos }}
+    <TodoList :todos="todos" v-on:check="done"/>
   </div>
 </template>
 
@@ -23,7 +24,7 @@ export default {
   components: {
     TodoList
   },
-  data() {
+  data () {
     return {
       todos: [
         { id: getUUID(), text: '緑茶を買う', done: false},
@@ -33,8 +34,12 @@ export default {
       ]
     }
   },
-  mounted() {
-    console.log(this.todos)
+  methods: {
+    done (id, checked) {
+      this.todos.find(
+        (todo) => todo.id === id
+      ).done = checked
+    }
   }
 }
 </script>
