@@ -1,7 +1,7 @@
 <template>
   <div id="todo">
     <h1>Todo</h1>
-    <TodoList :todos="todos" v-on:check="done"/>
+    <TodoList :todos="todos" @check="done" @del="deleteTodo"/>
     <p>
       新しいTodoの追加:
       <input
@@ -55,6 +55,9 @@ export default {
         done: false
       })
       this.newTodo = ''
+    },
+    deleteTodo (id) {
+      this.todos = this.todos.filter((todo) => todo.id !== id)
     }
   }
 }

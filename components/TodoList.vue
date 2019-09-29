@@ -11,6 +11,7 @@
           @change="clickCheckbox($event)"
         >
         <label :for="todo.id">{{ todo.text }}</label>
+        <button :id="todo.id" @click="deleteTodo($event)">delete</button>
       </li>
     </ul>
   </div>
@@ -27,6 +28,10 @@ export default {
       const id = e.target.id
       const checked = e.target.checked
       this.$emit('check', id, checked)
+    },
+    deleteTodo (e) {
+      const id = e.target.id
+      this.$emit('del', id)
     }
   }
 }
